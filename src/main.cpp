@@ -64,11 +64,9 @@ int main() {
     };
 
 //generating and binding vertex buffer objects
-    unsigned int VBO;
+    unsigned int VBO, VAO;
     glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
+    glGenVertexArrays(1, &VAO);
 //compiles vertex shader
     unsigned int vertexShader;
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -111,6 +109,15 @@ int success;
     }
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShaders);
+
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
     //below is the render loop, the rendering commands shouldd be put here!!!! <3
     while (!glfwWindowShouldClose(window))
     {   //this checks for inputs
@@ -119,9 +126,10 @@ int success;
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //red, green, blue, alpha. range is [0, 1]
         glClear(GL_COLOR_BUFFER_BIT);
 
-
         glUseProgram(shaderProgram);
-
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        
         //check and call events and swap the buffers(no idea what that means)
         glfwPollEvents();
         glfwSwapBuffers(window);
